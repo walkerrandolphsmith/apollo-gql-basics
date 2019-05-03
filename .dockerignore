@@ -1,0 +1,8 @@
+./services/**/node_modules
+./servicescomponent-library/.docz
+./docker/data
+./docker/db-notes-mongo
+./docker/mongod.conf
+.github/
+.vscode/
+node_modules/

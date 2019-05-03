@@ -1,0 +1,33 @@
+version: "3.3"
+
+services:
+  app:
+    build:
+      context: ../.
+      dockerfile: services/app/config/docker/Dockerfile.dev
+    image: unit-app-image
+    env_file: ./../env/.env.test
+    volumes:
+      - ./../services/app/src:/usr/src/app/src
+      - ./../services/app/config:/usr/src/app/config
+      - ./../services/app/babel.config.js:/usr/src/app/babel.config.js
+      - ./../services/app/config/test:/usr/src/app/config/test
+      - ./../services/app/scripts:/usr/src/app/scripts
+    ports:
+      - "3000"
+    command: [npm, run, test]
+
+  api:
+    build:
+      context: ../.
+      dockerfile: services/api/config/docker/Dockerfile.dev
+    image: unit-api-image
+    env_file: ./../env/.env.test
+    volumes:
+      - ./../services/api/src:/usr/src/api/src
+      - ./../services/api/babel.config.js:/usr/src/api/babel.config.js
+      - ./../services/api/config/test:/usr/src/api/config/test
+      - ./../services/api/scripts:/usr/src/api/scripts
+    ports:
+      - "8080"
+    command: [npm, run, test]

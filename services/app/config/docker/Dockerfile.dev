@@ -1,0 +1,9 @@
+FROM node:10-alpine
+
+WORKDIR /usr/src/app
+
+COPY ./services/app/package-lock.json ./services/app/package.json ./
+
+RUN npm install --no-progress --ignore-optional --silent
+
+CMD ["npm", "run", "start"]

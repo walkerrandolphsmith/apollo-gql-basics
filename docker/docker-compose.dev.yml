@@ -1,0 +1,83 @@
+version: "3.3"
+
+networks:
+  webnet:
+  internalnet:
+
+volumes:
+  data-db:
+
+services:
+  server:
+    build:
+      context: ../.
+      dockerfile: services/server/config/docker/Dockerfile.dev
+    image: server-image-dev
+    container_name: server-container-dev
+    volumes:
+      - ./../services/server/config/nginx.dev.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - webnet
+
+  app:
+    build:
+      context: ../.
+      dockerfile: services/app/config/docker/Dockerfile.dev
+    image: app-image-dev
+    container_name: app-container-dev
+    env_file: ./../env/.env.dev
+    volumes:
+      - ./../services/app/src:/usr/src/app/src
+      - ./../services/app/config:/usr/src/app/config
+      - ./../services/app/babel.config.js:/usr/src/app/babel.config.js
+      - ./../services/app/scripts:/usr/src/app/scripts
+    ports:
+      - "3000"
+    networks:
+      - webnet
+    command: [npm, run, start]
+
+  api:
+    build:
+      context: ../.
+      dockerfile: services/api/config/docker/Dockerfile.dev
+    image: api-image-dev
+    container_name: api-container-dev
+    env_file: ./../env/.env.dev
+    volumes:
+      - ./../services/api/src:/usr/src/api/src
+      - ./../services/api/babel.config.js:/usr/src/api/babel.config.js
+      - ./../services/api/scripts:/usr/src/api/scripts
+    ports:
+      - "8080"
+    networks:
+      - internalnet
+      - webnet
+    command: [npm, run, start]
+
+  db:
+    image: mongo:3.6-jessie
+    container_name: db-container-dev
+    env_file: ./../env/.env.dev
+    expose:
+      - "27017"
+    networks:
+      - internalnet
+    volumes:
+      - ./data/mongo:/data/db
+
+  db-ui:
+    image: mongo-express
+    container_name: db-ui-container-dev
+    ports:
+      - "8081:8081"
+    networks:
+      - internalnet
+      - webnet
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: pass
+      ME_CONFIG_MONGODB_SERVER: db

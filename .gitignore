@@ -1,0 +1,21 @@
+# misc
+.DS_Store
+.idea
+
+# dependencies
+/node_modules
+/npm-debug.log*
+services/**/node_modules
+services/**/npm-debug.log*
+
+# testing
+services/**/coverage
+services/**/.nyc_output
+
+# artifacts
+services/**/dist
+
+# env files
+env/.env.dev
+env/.env.test
+env/.env.prod

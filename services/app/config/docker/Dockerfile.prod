@@ -1,0 +1,21 @@
+FROM node:10-alpine
+
+WORKDIR /usr/src/app
+
+COPY ./services/app/package-lock.json ./services/app/package.json ./
+
+RUN npm install --no-progress --no-optional --silent
+
+COPY ./services/app/babel.config.js ./babel.config.js
+COPY ./services/app/config ./config
+COPY ./services/app/src ./src
+
+COPY ./services/app/scripts ./scripts
+RUN chmod -R +x ./scripts
+RUN ./scripts/build.sh
+
+RUN rm ./babel.config.js
+RUN rm -rf ./config
+RUN rm -rf ./src
+
+CMD ["./scripts/entrypoint.sh"]

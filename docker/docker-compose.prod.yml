@@ -1,0 +1,74 @@
+version: "3.3"
+
+networks:
+  webnet:
+  internalnet:
+
+volumes:
+  data-db:
+
+services:
+  server:
+    build:
+      context: ../.
+      dockerfile: services/server/config/docker/Dockerfile.prod
+    image: server-image-prod
+    container_name: server-container-prod
+    volumes:
+      - ./../services/server/config/nginx.prod.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - webnet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+
+  app:
+    build:
+      context: ../.
+      dockerfile: services/app/config/docker/Dockerfile.prod
+    image: app-image-prod
+    container_name: app-container-prod
+    env_file: ./../env/.env.prod
+    ports:
+      - "3000:3000"
+    networks:
+      - webnet
+    command: ["npm", "run", "prod:start"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+
+  api:
+    build:
+      context: ../.
+      dockerfile: services/api/config/docker/Dockerfile.prod
+    image: api-image-prod
+    container_name: api-container-prod
+    env_file: ./../env/.env.prod
+    ports:
+      - "8080:8080"
+    networks:
+      - internalnet
+      - webnet
+    command: ["npm", "run", "prod:start"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/graphql"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+
+  db:
+    image: mongo:3.6-jessie
+    container_name: db-container-prod
+    env_file: ./../env/.env.prod
+    networks:
+      - internalnet
+    volumes:
+      - ./data/mongo:/data/db

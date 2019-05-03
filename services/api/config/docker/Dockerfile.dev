@@ -1,0 +1,21 @@
+FROM node:10-alpine
+
+RUN apk update && apk add --no-cache \
+  make gcc g++ python \
+  git \
+  build-base \
+  cairo-dev \
+  jpeg-dev \
+  pango-dev \
+  freetype-dev \
+  giflib-dev
+
+WORKDIR /usr/src/api
+
+COPY ./services/api/package-lock.json ./services/api/package.json ./
+
+RUN npm install --no-progress --ignore-optional --silent
+
+RUN apk del make gcc g++ python
+
+CMD ["npm", "run", "start"]
