@@ -14,7 +14,7 @@
     "build": "./scripts/build.sh"
   },
   "dependencies": {
-    "apollo-server": "^2.0.6",
+    "apollo-server": "^2.14.2",
     "apollo-server-express": "^2.0.5",
     "bcrypt": "^3.0.0",
     "btoa": "^1.2.1",
