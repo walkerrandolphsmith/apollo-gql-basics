@@ -29,7 +29,7 @@
     "lodash.get": "^4.4.2",
     "lodash.isfunction": "^3.0.9",
     "mailgun-js": "^0.20.0",
-    "mongoose": "^5.5.2",
+    "mongoose": "^5.7.5",
     "passport": "^0.4.0",
     "uuid": "^3.3.2"
   },
